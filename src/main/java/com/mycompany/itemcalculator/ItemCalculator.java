@@ -622,15 +622,15 @@ public class ItemCalculator extends javax.swing.JFrame {
             int value1 = settings.getInt("availabilityDifferencePercent");
             availabilityDifferenceSlider.setValue(value1);
             availabilityDifferenceValue.setText(value1 + "");
-            availabilityDiffereneWeight=value1/100.f;
+            availabilityDiffereneWeight = value1 / 100.f;
             int value2 = settings.getInt("availabilityAveragePercent");
             availabilityAverageSlider.setValue(value2);
             availabilityAverageValue.setText(value2 + "");
-            availabilityAverageWeight=value2/100.f;
+            availabilityAverageWeight = value2 / 100.f;
             int value3 = settings.getInt("profitPercent");
             profitSlider.setValue(value3);
             profitValue.setText(value3 + "");
-            profitWeight=value3/100.f;
+            profitWeight = value3 / 100.f;
 
             sumValue.setText((value1 + value2 + value3) + "");
 
@@ -641,9 +641,9 @@ public class ItemCalculator extends javax.swing.JFrame {
     }
 
     public void updateSettings(int newValue1, int newValue2, int newValue3) {
-        availabilityDiffereneWeight=newValue1/100.f;
-        availabilityAverageWeight=newValue2/100.f;
-        profitWeight=newValue3/100.f;
+        availabilityDiffereneWeight = newValue1 / 100.f;
+        availabilityAverageWeight = newValue2 / 100.f;
+        profitWeight = newValue3 / 100.f;
         JSONObject updatedSettings = new JSONObject();
         updatedSettings.put("availabilityDifferencePercent", newValue1);
         updatedSettings.put("availabilityAveragePercent", newValue2);
@@ -659,7 +659,7 @@ public class ItemCalculator extends javax.swing.JFrame {
     ****************************************************************************
     * GET THE CONTENTS OF THE TABLE SECTION
     ****************************************************************************
-    */
+     */
 
     private Object[][] tabla;
     private String[] titulos = {"ID", "SELL_AV.", "SELL_PRICE", "BUY_AV.", "BUY_PRICE", "SCORE"};
@@ -716,7 +716,7 @@ public class ItemCalculator extends javax.swing.JFrame {
         //Set BUY_AV
         try {
             float tmpBuy = ((float) product.getQuickStatus().getBuyMovingWeek() / 7.0f) / (float) product.getQuickStatus().getBuyVolume();
-            if (Float.isNaN(tmpBuy)|| Float.isInfinite(tmpBuy)) {
+            if (Float.isNaN(tmpBuy) || Float.isInfinite(tmpBuy)) {
                 tmpBuy = 0.f;
             }
             tabla[i][3] = tmpBuy;
@@ -761,7 +761,7 @@ public class ItemCalculator extends javax.swing.JFrame {
     private void IDFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_IDFieldActionPerformed
-    
+
     //Search Bar
     private void IDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDButtonActionPerformed
         String searchText = IDField.getText().trim();
@@ -785,26 +785,25 @@ public class ItemCalculator extends javax.swing.JFrame {
     ****************************************************************************
     * CALCULATE STATS FOR ITEM SECTION
     ****************************************************************************
-    */
-    
+     */
     //Calcual el mejor item cuando se pulsa el boton
     private void calculateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calculateButtonActionPerformed
         float money;
         int ammount;
         //Obtain the values for money and ammount. If incorrect, set them to 0
-        try{
+        try {
             money = Float.parseFloat(moneyField.getText());
-        } catch(NumberFormatException e){
-            moneyField.setText(0+"");
+        } catch (NumberFormatException e) {
+            moneyField.setText(0 + "");
             money = 0;
         }
-        try{
+        try {
             ammount = Integer.parseInt(ammountCombo.getSelectedItem().toString());
-        } catch(NumberFormatException e){
-            ammountCombo.setSelectedItem(0+"");
+        } catch (NumberFormatException e) {
+            ammountCombo.setSelectedItem(0 + "");
             ammount = 0;
         }
-        
+
         //Calcular:
         //1) Cantidad que se puede comprar y clamp al valor de ammount
         //2) Multiplicar el clamped ammount por valor de compra
@@ -821,33 +820,45 @@ public class ItemCalculator extends javax.swing.JFrame {
         double maxAverage = 0;
         double[] revenue = new double[tabla.length];
         //for para calcular revenue y obtener el max
-        for(int i = 0; i<tabla.length; i++){
+        for (int i = 0; i < tabla.length; i++) {
             //1) Cantidad que se puede comprar y clamp al valor de ammount
             int buyingAmmount = calculateAmmountAndClamp(ammount, money, Float.parseFloat(tabla[i][2].toString()));
             //2) Multiplicar el clamped ammount por valor de compra
-            double buyingCost = buyingAmmount*(Double.parseDouble(tabla[i][2].toString()));
+            double buyingCost = buyingAmmount * (Double.parseDouble(tabla[i][2].toString()));
             //3) Multiplicar el clamped ammount por valor de venta
-            double sellingCost = buyingAmmount*(Double.parseDouble(tabla[i][4].toString()));
+            double sellingCost = buyingAmmount * (Double.parseDouble(tabla[i][4].toString()));
             //4) Obtener el revenue
-            revenue[i] = sellingCost-buyingCost;
+            revenue[i] = sellingCost - buyingCost;
             //5) Obtener el maximo de revenue
             maxRevenue = Math.max(maxRevenue, revenue[i]);
             //5.2) Obtener el maximo de diferencia y media
-            maxDifference = Math.max(maxDifference, Math.abs(Double.parseDouble(tabla[i][1].toString())-Double.parseDouble(tabla[i][3].toString())));
-            maxAverage = Math.max(maxAverage, (Double.parseDouble(tabla[i][1].toString())+Double.parseDouble(tabla[i][3].toString())/2));
+            maxDifference = Math.max(maxDifference, Math.abs(Double.parseDouble(tabla[i][1].toString()) - Double.parseDouble(tabla[i][3].toString())));
+            maxAverage = Math.max(maxAverage, (Double.parseDouble(tabla[i][1].toString()) + Double.parseDouble(tabla[i][3].toString()) / 2));
         }
         //for para calcular las diferencias, medias de availabilies, normalizar y calcular el score
         for (int i = 0; i < tabla.length; i++) {
             //6) Obtener la diferencia de Availabilities
-            double difference = -Math.abs(Double.parseDouble(tabla[i][1].toString())-Double.parseDouble(tabla[i][3].toString()));
+            double sellAv = Double.parseDouble(tabla[i][1].toString());
+            double buyAv = Double.parseDouble(tabla[i][3].toString());
+            double difference = Math.abs(sellAv - buyAv);
             //7) Obtener la media de Availabilities
-            double average = (Double.parseDouble(tabla[i][1].toString())+Double.parseDouble(tabla[i][3].toString()))/2.;
+            double average = (Double.parseDouble(tabla[i][1].toString()) + Double.parseDouble(tabla[i][3].toString())) / 2.;
             //8) Normalizar los valores
             difference = scaleValue(difference, maxDifference, maxRevenue);
             average = scaleValue(average, maxAverage, maxRevenue);
-            
+
             //9) Calcular score
-            tabla[i][5]=difference*availabilityDiffereneWeight+average*availabilityAverageWeight+revenue[i]*profitWeight;
+            //Penalize items that have a low volatility
+            if (buyAv < 1. || sellAv < 1.) {
+                difference = -difference;
+                revenue[i] = revenue[i]*Math.min(buyAv, sellAv);
+            }
+            
+            if (sellAv == 0. || buyAv == 0. || revenue[i] == 0.) {
+                tabla[i][5] = 0;
+            } else {
+                tabla[i][5] = difference * availabilityDiffereneWeight + average * availabilityAverageWeight + revenue[i] * profitWeight;
+            }
         }
 
         //sort
@@ -855,23 +866,27 @@ public class ItemCalculator extends javax.swing.JFrame {
     }//GEN-LAST:event_calculateButtonActionPerformed
 
     //Calcula cuantos items se pueden comprar y lo limita al valor de ammount
-    private int calculateAmmountAndClamp(int ammount, float money, float cost){
+    private int calculateAmmountAndClamp(int ammount, float money, float cost) {
         //Avoid dive by 0
-        if(cost == 0) return 0;
+        if (cost == 0) {
+            return 0;
+        }
         //Return clamped ammount
-        if(ammount!=0)return Math.min(ammount, (int)(money/cost));
+        if (ammount != 0) {
+            return Math.min(ammount, (int) (money / cost));
+        }
         //return unclamped
-        return (int)(money/cost);
-        
+        return (int) (money / cost);
+
     }
-    
+
     //Devuelve el valor normalizado entre min y max
-    private double scaleValue(double value, double maxOriginal, double maxTarget){
-        return value*(maxTarget/maxOriginal);
+    private double scaleValue(double value, double maxOriginal, double maxTarget) {
+        return value * (maxTarget / maxOriginal);
     }
-    
+
     //Sort elements by the value of the column
-    private void sortByColumnAndUpdate(int col){
+    private void sortByColumnAndUpdate(int col) {
         //sort
         Arrays.sort(tabla, new Comparator<Object[]>() {
             @Override
@@ -879,20 +894,20 @@ public class ItemCalculator extends javax.swing.JFrame {
                 // Assuming the elements at index N are Comparable (e.g., Integer, String)
                 // You might need to handle ClassCastException if the elements are not Comparable
                 // or perform type checking and casting if necessary
-                Double elem1 =  Double.parseDouble(o1[col].toString());
-                Double elem2 =  Double.parseDouble(o2[col].toString());
+                Double elem1 = Double.parseDouble(o1[col].toString());
+                Double elem2 = Double.parseDouble(o2[col].toString());
                 return elem1.compareTo(elem2);
             }
         });
-        
+
         for (int i = 0; i < tabla.length; i++) {
             for (int j = 0; j < tabla[i].length; j++) {
                 dataTable.setValueAt(tabla[tabla.length - 1 - i][j], i, j);
             }
         }
     }
-    
-    
+
+
     private void obtainButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_obtainButtonActionPerformed
         runButtonActionPerformed(evt);
     }//GEN-LAST:event_obtainButtonActionPerformed
@@ -963,29 +978,36 @@ public class ItemCalculator extends javax.swing.JFrame {
     private void saveSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSettingsButtonActionPerformed
         updateSettings(availabilityDifferenceSlider.getValue(), availabilityAverageSlider.getValue(), profitSlider.getValue());
     }//GEN-LAST:event_saveSettingsButtonActionPerformed
-    
+
     //SHOW DATA WHEN MOUSE IS CLICKED ON TABLE
     private void dataTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dataTableMouseClicked
         int row = dataTable.rowAtPoint(evt.getPoint());
-        try{
+        try {
+            //get money
             float money = Float.parseFloat(moneyField.getText());
-            if(row>=0 && Float.isFinite(money) && money >=0.f){
+            //check if ammount is defines
+            int amount = 0;
+            if (!ammountCombo.getSelectedItem().toString().isEmpty()) {
+                amount = Integer.parseInt(ammountCombo.getSelectedItem().toString());
+            }
+
+            if (row >= 0 && Float.isFinite(money) && money >= 0.f) {
                 //Muestra el panel de la propiedades
                 propertiesPanel.setVisible(true);
-                int amount = (int)(money/(Float.parseFloat(dataTable.getValueAt(row, 2).toString())+0.1f));
-                float profit = (Float.parseFloat(dataTable.getValueAt(row, 4).toString())+0.1f)-(Float.parseFloat(dataTable.getValueAt(row, 2).toString())-0.1f);
-                buyingValue.setText(amount+"");
-                individualProfitValue.setText(profit+"");
-                totalProfitValue.setText((profit*amount)+"");
-                timeMaximumBuyingValue.setText((1/Float.parseFloat(dataTable.getValueAt(row, 1).toString()))+" days");
-                timeMaximumSellingValue.setText((1/Float.parseFloat(dataTable.getValueAt(row, 3).toString()))+" days");
-                
+                amount = Math.min((int) (money / (Float.parseFloat(dataTable.getValueAt(row, 2).toString()) + 0.1f)), amount);
+                float profit = (Float.parseFloat(dataTable.getValueAt(row, 4).toString()) + 0.1f) - (Float.parseFloat(dataTable.getValueAt(row, 2).toString()) - 0.1f);
+                buyingValue.setText(amount + "");
+                individualProfitValue.setText(profit + "");
+                totalProfitValue.setText((profit * amount) + "");
+                timeMaximumBuyingValue.setText((1 / Float.parseFloat(dataTable.getValueAt(row, 1).toString())) + " days");
+                timeMaximumSellingValue.setText((1 / Float.parseFloat(dataTable.getValueAt(row, 3).toString())) + " days");
+
             }
-        } catch(NumberFormatException e){
-            
+        } catch (NumberFormatException e) {
+
         }
-        
-        
+
+
     }//GEN-LAST:event_dataTableMouseClicked
 
     private void moneyFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moneyFieldActionPerformed
