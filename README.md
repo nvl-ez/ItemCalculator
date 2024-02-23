@@ -1,3 +1,3 @@
-#Item Calculator for Hypixel Skyblock
+# Item Calculator for Hypixel Skyblock
 This small program reads the current state of the bazaar and after providing the ammount of money and quantity (optional),  will calculate the best items to buy for maximizing profit when flipping. There are plans on adding some similar system for auctions, reading progress, obtaining the money of the user automatically...
 The code calculating the best item is rather simple and might not give the best item the highest score so any contribution is appreciated.
