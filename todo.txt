@@ -1,0 +1,2 @@
+Guardar en los settings thresholes donde cambia el color de rojo a verde
+change options from showing days or minutes in estimated time
