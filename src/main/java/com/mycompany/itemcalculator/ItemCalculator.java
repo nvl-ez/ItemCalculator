@@ -93,6 +93,8 @@ public class ItemCalculator extends javax.swing.JFrame {
         profitValue = new javax.swing.JLabel();
         sumValue = new javax.swing.JLabel();
         saveSettingsButton = new javax.swing.JButton();
+        availabilityPenaltyLabel = new javax.swing.JLabel();
+        availabilityPenaltyField = new javax.swing.JTextField();
         topMenuBar = new javax.swing.JMenuBar();
         obtainMenu = new javax.swing.JMenu();
         runButton = new javax.swing.JMenuItem();
@@ -443,14 +445,32 @@ public class ItemCalculator extends javax.swing.JFrame {
             }
         });
 
+        availabilityPenaltyLabel.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        availabilityPenaltyLabel.setText("Availability Penalty:");
+
+        availabilityPenaltyField.setColumns(5);
+        availabilityPenaltyField.setText("1");
+        availabilityPenaltyField.setToolTipText("If either buy or sell availability is under this value, the score will be greately penalized.");
+        availabilityPenaltyField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                availabilityPenaltyFieldActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout settingsPanelLayout = new javax.swing.GroupLayout(settingsPanel);
         settingsPanel.setLayout(settingsPanelLayout);
         settingsPanelLayout.setHorizontalGroup(
             settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(saveSettingsButton)
+                .addContainerGap())
             .addGroup(settingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(settingsLabel)
-                .addContainerGap(640, Short.MAX_VALUE))
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(settingsLabel)
+                    .addComponent(availabilityPenaltyField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(settingsPanelLayout.createSequentialGroup()
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(paramWeightLabel)
@@ -478,12 +498,9 @@ public class ItemCalculator extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(availabilityAverageValue)
-                                    .addComponent(profitValue))))))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(saveSettingsButton)
-                .addContainerGap())
+                                    .addComponent(profitValue)))))
+                    .addComponent(availabilityPenaltyLabel))
+                .addGap(0, 399, Short.MAX_VALUE))
         );
         settingsPanelLayout.setVerticalGroup(
             settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -509,7 +526,11 @@ public class ItemCalculator extends javax.swing.JFrame {
                     .addComponent(profitValue))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sumValue)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 167, Short.MAX_VALUE)
+                .addGap(7, 7, 7)
+                .addComponent(availabilityPenaltyLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(availabilityPenaltyField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 107, Short.MAX_VALUE)
                 .addComponent(saveSettingsButton)
                 .addContainerGap())
         );
@@ -577,9 +598,10 @@ public class ItemCalculator extends javax.swing.JFrame {
      */
     //Function to obtain the settings
     File file = new File("settings.json");
-    float availabilityDiffereneWeight = 0.33f;
-    float availabilityAverageWeight = 0.33f;
-    float profitWeight = 0.34f;
+    float availabilityDiffereneWeight = 0.38f;
+    float availabilityAverageWeight = 0.52f;
+    float profitWeight = 0.10f;
+    float availabilityPenalty = 1.f;
 
     public void initSettings() {
         if (!file.exists()) {
@@ -603,8 +625,12 @@ public class ItemCalculator extends javax.swing.JFrame {
             defaultSettings.put("profitPercent", 10); // Default value
             profitSlider.setValue(10);
             profitValue.setText(10 + "");
-
+            
             sumValue.setText(100 + "");
+            
+            defaultSettings.put("availabilityPenalty", 1.f); // Default value
+            availabilityPenaltyField.setText(1+"");
+            availabilityPenalty = 1.f;
 
             //...
             writer.write(defaultSettings.toString());
@@ -633,6 +659,10 @@ public class ItemCalculator extends javax.swing.JFrame {
             profitWeight = value3 / 100.f;
 
             sumValue.setText((value1 + value2 + value3) + "");
+            
+            float value4 = settings.getInt("availabilityPenalty");
+            availabilityPenaltyField.setText(value4+"");
+            availabilityPenalty = value4;
 
             //...
         } catch (IOException | org.json.JSONException e) {
@@ -640,14 +670,16 @@ public class ItemCalculator extends javax.swing.JFrame {
         }
     }
 
-    public void updateSettings(int newValue1, int newValue2, int newValue3) {
+    public void updateSettings(int newValue1, int newValue2, int newValue3, float newValue4) {
         availabilityDiffereneWeight = newValue1 / 100.f;
         availabilityAverageWeight = newValue2 / 100.f;
         profitWeight = newValue3 / 100.f;
+        availabilityPenalty = newValue4;
         JSONObject updatedSettings = new JSONObject();
         updatedSettings.put("availabilityDifferencePercent", newValue1);
         updatedSettings.put("availabilityAveragePercent", newValue2);
         updatedSettings.put("profitPercent", newValue3);
+        updatedSettings.put("availabilityPenalty", newValue4);
 
         try (FileWriter writer = new FileWriter(file)) {
             writer.write(updatedSettings.toString());
@@ -849,7 +881,7 @@ public class ItemCalculator extends javax.swing.JFrame {
 
             //9) Calcular score
             //Penalize items that have a low volatility
-            if (buyAv < 1. || sellAv < 1.) {
+            if (buyAv < availabilityPenalty || sellAv < availabilityPenalty) {
                 difference = -difference;
                 revenue[i] = revenue[i]*Math.min(buyAv, sellAv);
             }
@@ -976,7 +1008,12 @@ public class ItemCalculator extends javax.swing.JFrame {
     }//GEN-LAST:event_profitSliderStateChanged
 
     private void saveSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSettingsButtonActionPerformed
-        updateSettings(availabilityDifferenceSlider.getValue(), availabilityAverageSlider.getValue(), profitSlider.getValue());
+        try{
+            updateSettings(availabilityDifferenceSlider.getValue(), availabilityAverageSlider.getValue(), profitSlider.getValue(), 
+                    Float.parseFloat(availabilityPenaltyField.getText()));
+        } catch(NumberFormatException e){
+            updateSettings(availabilityDifferenceSlider.getValue(), availabilityAverageSlider.getValue(), profitSlider.getValue(), 1);
+        }
     }//GEN-LAST:event_saveSettingsButtonActionPerformed
 
     //SHOW DATA WHEN MOUSE IS CLICKED ON TABLE
@@ -994,7 +1031,11 @@ public class ItemCalculator extends javax.swing.JFrame {
             if (row >= 0 && Float.isFinite(money) && money >= 0.f) {
                 //Muestra el panel de la propiedades
                 propertiesPanel.setVisible(true);
-                amount = Math.min((int) (money / (Float.parseFloat(dataTable.getValueAt(row, 2).toString()) + 0.1f)), amount);
+                if(amount>0){
+                    amount = Math.min((int) (money / (Float.parseFloat(dataTable.getValueAt(row, 2).toString()) + 0.1f)), amount);
+                } else{
+                    amount = (int)(money / (Float.parseFloat(dataTable.getValueAt(row, 2).toString()) + 0.1f));
+                }
                 float profit = (Float.parseFloat(dataTable.getValueAt(row, 4).toString()) + 0.1f) - (Float.parseFloat(dataTable.getValueAt(row, 2).toString()) - 0.1f);
                 buyingValue.setText(amount + "");
                 individualProfitValue.setText(profit + "");
@@ -1013,6 +1054,10 @@ public class ItemCalculator extends javax.swing.JFrame {
     private void moneyFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moneyFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_moneyFieldActionPerformed
+
+    private void availabilityPenaltyFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_availabilityPenaltyFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_availabilityPenaltyFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1060,6 +1105,8 @@ public class ItemCalculator extends javax.swing.JFrame {
     private javax.swing.JLabel availabilityDifferenceLabel;
     private javax.swing.JSlider availabilityDifferenceSlider;
     private javax.swing.JLabel availabilityDifferenceValue;
+    private javax.swing.JTextField availabilityPenaltyField;
+    private javax.swing.JLabel availabilityPenaltyLabel;
     private javax.swing.JLabel buyingLabel;
     private javax.swing.JLabel buyingValue;
     private javax.swing.JButton calculateButton;
