@@ -882,8 +882,10 @@ public class ItemCalculator extends javax.swing.JFrame {
             //9) Calcular score
             //Penalize items that have a low volatility
             if (buyAv < availabilityPenalty || sellAv < availabilityPenalty) {
-                difference = -difference;
-                revenue[i] = revenue[i]*Math.min(buyAv, sellAv);
+                difference = -(difference);
+                revenue[i] = revenue[i]*(Math.min(buyAv, sellAv));
+            } else{
+                difference = maxRevenue-difference;
             }
             
             if (sellAv == 0. || buyAv == 0. || revenue[i] == 0.) {
